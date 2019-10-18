@@ -1,19 +1,19 @@
 <template>
   <div>
-    <Joke v-for="joke in jokes" :key="joke.id" :id="joke.id" :joke="joke.joke" />
+    <nuxt-link to="/jokes">Back to Jokes</nuxt-link>
+    <h2>{{ joke }}</h2>
+    <hr />
+    <small>Joke: {{ $route.params.id }}</small>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import Joke from '../../components/Joke';
+
 export default {
-  components: {
-    Joke
-  },
   data() {
     return {
-      jokes: []
+      joke: {}
     }
   },
   async created() {
@@ -24,9 +24,11 @@ export default {
     }
 
     try {
-      const res = await axios.get('https://icanhazdadjoke.com/search', config);
+      const res = await axios.get(`https://icanhazdadjoke.com/j/${this.$route.params.id}`, 
+      config
+      );
 
-      this.jokes = res.data.results;
+      this.joke = res.data.joke;
     } catch (err) {
       console.log(err)
     }
@@ -34,7 +36,7 @@ export default {
   },
   head() {
     return {
-      title: "Jokes",
+      title: this.joke,
       meta: [
         {
           hid: "description",
